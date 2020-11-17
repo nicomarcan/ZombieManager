@@ -1,7 +1,6 @@
 import React, {Component, useCallback}  from 'react';
 import {Container, Jumbotron, ListGroup, Row, Col, Form, Button} from 'react-bootstrap'
-import { DndProvider, useDrag, useDrop } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export const ItemTypes = {
     Zombie: 'zombie'
@@ -51,16 +50,9 @@ function ZombieList(props: IZombieListProps){
 }
 
 function ZombieView(props: IZombieViewProps){
-  const [{ isDragging }, drag] = useDrag({
-    item: { type: ItemTypes.Zombie },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging()
-    })
-  });
   return (
-   <ListGroup.Item  key={props.zombie.id}><div ref={drag}> {props.zombie.name}</div></ListGroup.Item>
+   <ListGroup.Item  key={props.zombie.id}><div> {props.zombie.name}</div></ListGroup.Item>
   )
-  
 } 
 
 
@@ -78,9 +70,9 @@ class ZombieManager extends React.Component<IZombieManagerProps, IZombieManagerS
             {id:2, name: 'Warehouse'}
         ],
         zombies: [
-                    {id: 0, name: 'Zombie 1', locationId:2},
-                    {id: 1, name: 'Zombie 2', locationId:0},
-                    {id: 2, name: 'Zombie 3', locationId:1},
+            {id: 0, name: 'Zombie 1', locationId:2},
+            {id: 1, name: 'Zombie 2', locationId:0},
+            {id: 2, name: 'Zombie 3', locationId:1},
                  ]
     };
     this.state.locations.forEach((location) =>{
@@ -119,7 +111,7 @@ class ZombieManager extends React.Component<IZombieManagerProps, IZombieManagerS
       return '';
   }
 
-  public getLocations(): JSX.Element[]{
+  /*public getLocations(): JSX.Element[]{
     const locations: JSX.Element[] = [];
     this.state.locations.forEach((location) =>{
         locations.push(        
@@ -161,6 +153,8 @@ class ZombieManager extends React.Component<IZombieManagerProps, IZombieManagerS
     return foundLocation;
 }
 
+
+
   public moveZombie(event: any, context: any){
     event.preventDefault();
 
@@ -196,37 +190,18 @@ class ZombieManager extends React.Component<IZombieManagerProps, IZombieManagerS
         });    }
  }
 
+ */
+
   render(){
     return (
         <Container className="p-3">
             <Row className="zombiesView">
               <Jumbotron>
-                <DndProvider backend={HTML5Backend}>
                     <h1 className="header">Zombie Manager</h1>
                     <Row>
                         {this.zombiesByLocationView}
                     </Row>
-                </DndProvider>
               </Jumbotron>
-            </Row>
-            <Row>
-            <Form onSubmit={(event: any) => this.moveZombie(event,this)}>
-                <Form.Group controlId="zombie">
-                    <Form.Label>Zombie</Form.Label>
-                    <Form.Control as="select" >
-                        {this.getZombies()}
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group controlId="location">
-                    <Form.Label>Destination</Form.Label>
-                    <Form.Control as="select">
-                        {this.getLocations()}
-                    </Form.Control>
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                    Move
-                </Button>
-                </Form>
             </Row>
         </Container>
     );
